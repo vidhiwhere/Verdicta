@@ -1,18 +1,22 @@
 import React, { useState } from "react";
-import { ArrowLeft, UploadCloud, Trash, Key, AlertCircle, FileText } from "lucide-react";
+import { ArrowLeft, UploadCloud, Trash, Key, AlertCircle, FileText, Scale, Gavel, Briefcase } from "lucide-react";
 import { mockScenarios } from "../data/mockScenarios";
 
-export default function SetupPortal({ 
-  mode, 
-  onBack, 
-  onStartHearing, 
-  apiKey, 
-  openSettings 
+const courtIcons = {
+  "Civil Court": <Scale size={22} />,
+  "Consumer Forum": <Briefcase size={22} />,
+  "Labour Tribunal": <Gavel size={22} />,
+};
+
+export default function SetupPortal({
+  mode,
+  onBack,
+  onStartHearing,
+  apiKey,
+  openSettings
 }) {
-  // Standard Mode State
   const [selectedScenarioId, setSelectedScenarioId] = useState(null);
 
-  // Generative Mode States
   const [courtType, setCourtType] = useState("Civil Court");
   const [petitioner, setPetitioner] = useState("Rahul Mehta");
   const [respondent, setRespondent] = useState("Big-Tech Logistics Corp.");
@@ -22,31 +26,22 @@ export default function SetupPortal({
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [dragActive, setDragActive] = useState(false);
 
-  // Drag and drop mock file upload
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      addMockFiles(e.dataTransfer.files);
-    }
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) addMockFiles(e.dataTransfer.files);
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      addMockFiles(e.target.files);
-    }
+    if (e.target.files && e.target.files[0]) addMockFiles(e.target.files);
   };
 
   const addMockFiles = (files) => {
@@ -65,7 +60,6 @@ export default function SetupPortal({
   const handleSubmitGenerative = (e) => {
     e.preventDefault();
     if (!apiKey) {
-      alert("Please configure your Gemini API Key in Settings (bottom right) before starting Generative Mode.");
       openSettings();
       return;
     }
@@ -73,7 +67,6 @@ export default function SetupPortal({
       alert("Please describe the dispute facts first.");
       return;
     }
-
     const customCaseDetails = {
       id: "custom-generative",
       title: `${courtType} Hearing: ${petitioner} vs ${respondent}`,
@@ -84,278 +77,284 @@ export default function SetupPortal({
       dispute,
       language,
       documents: uploadedFiles,
-      acts: [
-        { section: "General Law", act: "Applicable Statutes", desc: "AI will cite relevant legal acts dynamically." }
-      ]
+      acts: [{ section: "General Law", act: "Applicable Statutes", desc: "AI will cite relevant legal acts dynamically." }]
     };
     onStartHearing(customCaseDetails);
   };
 
-  const handleStartStandard = (scenario) => {
-    onStartHearing(scenario);
-  };
-
   return (
-    <div className="container fade-in-up-class" style={{ padding: "40px 24px" }}>
-      {/* Back Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
-        <button className="btn btn-outline" style={{ padding: "8px 12px" }} onClick={onBack}>
-          <ArrowLeft size={16} />
-        </button>
-        <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-          Go Back
-        </span>
-      </div>
-
-      {mode === "standard" ? (
-        <div>
-          <h2 style={{ marginBottom: "12px" }}>Select a Case Scenario</h2>
-          <p style={{ color: "var(--text-secondary)", marginBottom: "32px", maxWidth: "600px" }}>
-            Choose one of our pre-configured mock scenarios developed in consultation with legal experts. Each scenario includes fixed dialogue paths, custom objections, and pre-defined grading benchmarks.
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "24px" }}>
-            {mockScenarios.map((scenario) => (
-              <div 
-                key={scenario.id} 
-                className={`wood-panel`} 
-                style={{ 
-                  padding: "30px", 
-                  textAlign: "left", 
-                  cursor: "pointer", 
-                  border: selectedScenarioId === scenario.id ? "2px solid var(--brass-gold)" : "2px solid var(--brass-dark)",
-                  boxShadow: selectedScenarioId === scenario.id ? "0 0 15px rgba(207, 161, 47, 0.3)" : "none"
-                }}
-                onClick={() => setSelectedScenarioId(scenario.id)}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
-                  <span className="badge badge-brass">{scenario.courtType}</span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{scenario.jurisdiction}</span>
-                </div>
-                
-                <h3 style={{ marginBottom: "12px", color: "var(--text-primary)" }}>{scenario.title}</h3>
-                
-                <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "20px", height: "70px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {scenario.dispute}
-                </p>
-
-                <div style={{ borderTop: "1px dashed var(--text-muted)", paddingTop: "12px", marginBottom: "20px" }}>
-                  <div style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "4px" }}>
-                    Key Citations:
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                    {scenario.acts.map((act, i) => (
-                      <span key={i} style={{ fontSize: "0.72rem", backgroundColor: "rgba(255,255,255,0.05)", padding: "2px 6px", borderRadius: "3px", color: "var(--brass-light)" }}>
-                        {act.section}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <button 
-                  className="btn btn-brass" 
-                  style={{ width: "100%" }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartStandard(scenario);
-                  }}
-                >
-                  Start Hearing
-                </button>
-              </div>
-            ))}
-          </div>
+    <div style={{ padding: "36px 0 60px" }} className="fade-in-up-class">
+      <div className="container">
+        {/* Back */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "36px" }}>
+          <button className="btn btn-outline" style={{ padding: "8px 14px", gap: "6px" }} onClick={onBack}>
+            <ArrowLeft size={15} />
+            <span>Back</span>
+          </button>
+          <div style={{ height: "1px", flex: 1, background: "linear-gradient(to right, rgba(255,255,255,0.06), transparent)" }} />
         </div>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "40px" }}>
-          {/* Form Side */}
-          <div>
-            <h2 style={{ marginBottom: "12px" }}>Setup Generative Case Profile</h2>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "32px" }}>
-              Input any dispute or legal scenario. The Judge AI and Opposing Counsel will generate responses dynamically, while the Feedback engine performs a blind assessment.
-            </p>
 
-            <form onSubmit={handleSubmitGenerative} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                <div className="form-group">
-                  <label className="form-label">Petitioner Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    value={petitioner} 
-                    onChange={e => setPetitioner(e.target.value)} 
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Respondent Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    value={respondent} 
-                    onChange={e => setRespondent(e.target.value)} 
-                    required 
-                  />
-                </div>
+        {mode === "standard" ? (
+          <>
+            <div style={{ marginBottom: "36px" }}>
+              <div className="hero-eyebrow" style={{ display: "inline-flex", marginBottom: "16px" }}>
+                Standard Practice Mode
               </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                <div className="form-group">
-                  <label className="form-label">Court / Tribunal Type</label>
-                  <select 
-                    className="form-control" 
-                    value={courtType} 
-                    onChange={e => setCourtType(e.target.value)}
-                  >
-                    <option value="Civil Court">Civil Court</option>
-                    <option value="Consumer Forum">Consumer Forum</option>
-                    <option value="Labour Tribunal">Labour Tribunal</option>
-                    <option value="Family Court">Family Court</option>
-                    <option value="High Court">High Court</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Hearing Language</label>
-                  <select 
-                    className="form-control" 
-                    value={language} 
-                    onChange={e => setLanguage(e.target.value)}
-                  >
-                    <option value="English">English</option>
-                    <option value="Hindi">Hindi (Mock/Mixed)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Representing Side</label>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <button 
-                    type="button" 
-                    className={`btn ${userSide === "petitioner" ? "btn-brass" : "btn-outline"}`}
-                    style={{ flex: 1 }}
-                    onClick={() => setUserSide("petitioner")}
-                  >
-                    Petitioner (Claimant)
-                  </button>
-                  <button 
-                    type="button" 
-                    className={`btn ${userSide === "respondent" ? "btn-brass" : "btn-outline"}`}
-                    style={{ flex: 1 }}
-                    onClick={() => setUserSide("respondent")}
-                  >
-                    Respondent (Defendant)
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Case Dispute & Facts</label>
-                <textarea 
-                  className="form-control" 
-                  rows="5"
-                  placeholder="Describe the legal issue in detail. State what your client claims, what the opponent argues, and what the key evidence is. (e.g. My client is suing for refund of advance payment, opponent claims work was completed...)"
-                  value={dispute}
-                  onChange={e => setDispute(e.target.value)}
-                  required
-                ></textarea>
-              </div>
-
-              {!apiKey && (
-                <div className="velvet-felt" style={{ padding: "16px", display: "flex", alignItems: "flex-start", gap: "12px", border: "1px solid var(--velvet-bright)" }}>
-                  <AlertCircle style={{ color: "#ff8a80", flexShrink: 0, marginTop: "2px" }} />
-                  <div>
-                    <h4 style={{ color: "#ff8a80", fontSize: "0.9rem", marginBottom: "4px" }}>API Key Needed</h4>
-                    <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                      Generative AI mode requires a Gemini API Key to run. Enter your key in settings at the bottom right of the screen before clicking Start.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <button 
-                type="submit" 
-                className="btn btn-brass" 
-                style={{ width: "100%", padding: "16px" }}
-              >
-                Assemble Courtroom & Start
-              </button>
-            </form>
-          </div>
-
-          {/* Upload Side */}
-          <div>
-            <h3 style={{ fontSize: "1.2rem", marginBottom: "16px" }}>Upload Case Files</h3>
-            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "20px" }}>
-              Attach pleadings, lease agreements, receipts, photos, or notices to reference in court.
-            </p>
-
-            {/* Drag & Drop Box */}
-            <div 
-              onDragEnter={handleDrag}
-              onDragOver={handleDrag}
-              onDragLeave={handleDrag}
-              onDrop={handleDrop}
-              style={{
-                border: dragActive ? "2px dashed var(--brass-gold)" : "2px dashed var(--bg-tertiary)",
-                backgroundColor: dragActive ? "rgba(207, 161, 47, 0.03)" : "rgba(255,255,255,0.01)",
-                borderRadius: "var(--border-radius-md)",
-                padding: "30px 20px",
-                textAlign: "center",
-                cursor: "pointer",
-                transition: "all var(--transition-fast)"
-              }}
-              onClick={() => document.getElementById("file-upload-input").click()}
-            >
-              <UploadCloud size={36} style={{ color: "var(--text-secondary)", marginBottom: "12px" }} />
-              <div style={{ fontSize: "0.85rem", fontWeight: "600", marginBottom: "4px" }}>Drag & drop files here</div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>or click to browse from device</div>
-              <input 
-                id="file-upload-input" 
-                type="file" 
-                multiple 
-                style={{ display: "none" }} 
-                onChange={handleFileChange}
-              />
+              <h2 style={{ marginBottom: "10px", fontSize: "2rem" }}>Select a Case Scenario</h2>
+              <p style={{ color: "var(--text-secondary)", maxWidth: "580px", lineHeight: "1.7", fontSize: "0.95rem" }}>
+                Pre-configured scenarios developed against strict legal rubrics. Each includes fixed dialogue paths, custom objection windows, and graded benchmarks.
+              </p>
             </div>
 
-            {/* Uploaded File List */}
-            {uploadedFiles.length > 0 && (
-              <div style={{ marginTop: "24px" }}>
-                <div className="form-label" style={{ marginBottom: "10px" }}>Attached Docket ({uploadedFiles.length})</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {uploadedFiles.map((file, index) => (
-                    <div 
-                      key={index}
-                      className="docket-card"
-                      style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
+              {mockScenarios.map((scenario) => (
+                <div
+                  key={scenario.id}
+                  className={`scenario-card ${selectedScenarioId === scenario.id ? "selected" : ""}`}
+                  onClick={() => setSelectedScenarioId(scenario.id)}
+                >
+                  {/* Top badges */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+                    <span className="badge badge-brass">{scenario.courtType}</span>
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+                      {scenario.jurisdiction?.split(",")[0]}
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <div style={{
+                    width: "48px", height: "48px",
+                    background: "rgba(201,152,30,0.08)",
+                    border: "1px solid rgba(201,152,30,0.18)",
+                    borderRadius: "var(--border-radius-md)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "var(--brass-gold)", marginBottom: "16px"
+                  }}>
+                    {courtIcons[scenario.courtType] || <Scale size={22} />}
+                  </div>
+
+                  <h3 style={{ marginBottom: "8px", fontSize: "1.25rem" }}>{scenario.title}</h3>
+
+                  <p style={{
+                    fontSize: "0.84rem",
+                    color: "var(--text-secondary)",
+                    marginBottom: "20px",
+                    lineHeight: "1.65",
+                    height: "72px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}>
+                    {scenario.dispute}
+                  </p>
+
+                  {/* Acts */}
+                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "14px", marginBottom: "20px" }}>
+                    <div style={{ fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--text-muted)", marginBottom: "8px", fontFamily: "var(--display-font)" }}>
+                      Key Statutes
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                      {scenario.acts.map((act, i) => (
+                        <span key={i} style={{
+                          fontSize: "0.68rem",
+                          background: "rgba(201,152,30,0.08)",
+                          border: "1px solid rgba(201,152,30,0.15)",
+                          padding: "3px 9px",
+                          borderRadius: "999px",
+                          color: "var(--brass-light)"
+                        }}>
+                          {act.section}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Docs count */}
+                  <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                      <FileText size={13} />
+                      <span>{scenario.documents.length} documents attached</span>
+                    </div>
+                  </div>
+
+                  <button
+                    className="btn btn-brass"
+                    style={{ width: "100%", padding: "13px" }}
+                    onClick={(e) => { e.stopPropagation(); onStartHearing(scenario); }}
+                  >
+                    Convene Courtroom →
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "48px", alignItems: "flex-start" }}>
+            {/* Form */}
+            <div>
+              <div className="hero-eyebrow" style={{ display: "inline-flex", marginBottom: "16px" }}>
+                Generative AI Mode
+              </div>
+              <h2 style={{ marginBottom: "10px", fontSize: "2rem" }}>Setup Your Case Profile</h2>
+              <p style={{ color: "var(--text-secondary)", marginBottom: "32px", lineHeight: "1.7", fontSize: "0.95rem" }}>
+                Describe any legal dispute. The Judge AI and Opposing Counsel will dynamically generate adversarial arguments while the Feedback Engine performs a blind evaluation.
+              </p>
+
+              <form onSubmit={handleSubmitGenerative} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <div className="form-group">
+                    <label className="form-label">Petitioner / Claimant</label>
+                    <input type="text" className="form-control" value={petitioner} onChange={e => setPetitioner(e.target.value)} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Respondent / Defendant</label>
+                    <input type="text" className="form-control" value={respondent} onChange={e => setRespondent(e.target.value)} required />
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <div className="form-group">
+                    <label className="form-label">Court / Tribunal</label>
+                    <select className="form-control" value={courtType} onChange={e => setCourtType(e.target.value)}>
+                      <option value="Civil Court">Civil Court</option>
+                      <option value="Consumer Forum">Consumer Forum</option>
+                      <option value="Labour Tribunal">Labour Tribunal</option>
+                      <option value="Family Court">Family Court</option>
+                      <option value="High Court">High Court</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Hearing Language</label>
+                    <select className="form-control" value={language} onChange={e => setLanguage(e.target.value)}>
+                      <option value="English">English</option>
+                      <option value="Hindi">Hindi (Mixed)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Your Representing Side</label>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button
+                      type="button"
+                      className={`btn ${userSide === "petitioner" ? "btn-brass" : "btn-outline"}`}
+                      style={{ flex: 1, padding: "11px" }}
+                      onClick={() => setUserSide("petitioner")}
                     >
-                      <FileText size={18} style={{ color: "var(--brass-gold)" }} />
+                      Petitioner (Claimant)
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn ${userSide === "respondent" ? "btn-brass" : "btn-outline"}`}
+                      style={{ flex: 1, padding: "11px" }}
+                      onClick={() => setUserSide("respondent")}
+                    >
+                      Respondent (Defendant)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Case Dispute & Key Facts</label>
+                  <textarea
+                    className="form-control"
+                    rows="5"
+                    placeholder="Describe the legal issue in detail: what your client claims, what the opponent argues, and the key evidence available..."
+                    value={dispute}
+                    onChange={e => setDispute(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {!apiKey && (
+                  <div style={{
+                    background: "rgba(90,19,24,0.2)",
+                    border: "1px solid var(--velvet-bright)",
+                    borderRadius: "var(--border-radius-md)",
+                    padding: "16px 18px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "12px"
+                  }}>
+                    <AlertCircle size={18} style={{ color: "#f48a80", flexShrink: 0, marginTop: "1px" }} />
+                    <div>
+                      <h4 style={{ color: "#f48a80", fontSize: "0.88rem", marginBottom: "4px", fontFamily: "var(--sans-serif)" }}>API Key Required</h4>
+                      <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+                        Generative AI Mode requires a Gemini API key.{" "}
+                        <span style={{ color: "var(--brass-gold)", cursor: "pointer", textDecoration: "underline" }} onClick={openSettings}>
+                          Configure it here →
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <button type="submit" className="btn btn-brass" style={{ width: "100%", padding: "16px", fontSize: "0.85rem" }}>
+                  <Gavel size={16} /> Assemble Courtroom & Start Hearing
+                </button>
+              </form>
+            </div>
+
+            {/* Upload side */}
+            <div style={{ position: "sticky", top: "20px" }}>
+              <h3 style={{ fontSize: "1.15rem", marginBottom: "8px" }}>Case Documents</h3>
+              <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: "20px", lineHeight: "1.65" }}>
+                Attach pleadings, agreements, receipts, or notices to reference in court.
+              </p>
+
+              {/* Drop Zone */}
+              <div
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById("file-upload-input").click()}
+                style={{
+                  border: `2px dashed ${dragActive ? "var(--brass-gold)" : "rgba(255,255,255,0.1)"}`,
+                  background: dragActive ? "rgba(201,152,30,0.04)" : "rgba(255,255,255,0.01)",
+                  borderRadius: "var(--border-radius-lg)",
+                  padding: "36px 24px",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all var(--transition-fast)",
+                  backdropFilter: "blur(4px)"
+                }}
+              >
+                <UploadCloud size={32} style={{ color: dragActive ? "var(--brass-gold)" : "var(--text-muted)", marginBottom: "12px", transition: "color 0.2s" }} />
+                <div style={{ fontSize: "0.85rem", fontWeight: "600", marginBottom: "4px", color: "var(--text-secondary)" }}>
+                  Drag & drop files here
+                </div>
+                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>or click to browse from device</div>
+                <input id="file-upload-input" type="file" multiple style={{ display: "none" }} onChange={handleFileChange} />
+              </div>
+
+              {/* Uploaded Files */}
+              {uploadedFiles.length > 0 && (
+                <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--text-muted)", marginBottom: "4px", fontFamily: "var(--display-font)" }}>
+                    Attached Docket ({uploadedFiles.length})
+                  </div>
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} className="docket-card" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px" }}>
+                      <FileText size={16} style={{ color: "var(--brass-gold)", flexShrink: 0 }} />
                       <div style={{ flexGrow: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: "0.8rem", fontWeight: "600", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {file.name}
-                        </div>
-                        <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>{file.size}</div>
+                        <div style={{ fontSize: "0.8rem", fontWeight: "600", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{file.name}</div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>{file.size}</div>
                       </div>
-                      <button 
-                        className="btn btn-outline" 
-                        style={{ padding: "4px 8px", border: "none" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteFile(index);
-                        }}
+                      <button
+                        className="btn btn-outline"
+                        style={{ padding: "4px 6px", border: "none", flexShrink: 0 }}
+                        onClick={(e) => { e.stopPropagation(); deleteFile(index); }}
                       >
-                        <Trash size={14} style={{ color: "var(--error)" }} />
+                        <Trash size={13} style={{ color: "var(--error-light)" }} />
                       </button>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

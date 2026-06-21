@@ -1,106 +1,145 @@
 import React from "react";
-import { Scale, Gavel, Award, ShieldAlert, HelpCircle, Compass } from "lucide-react";
+import { Scale, Gavel, Award, ShieldAlert, BookOpen, Compass, Zap, ChevronRight } from "lucide-react";
 
 export default function LandingPage({ onSelectMode, openSettings }) {
   return (
     <div className="hero-section fade-in-up-class">
-      {/* Interactive visual elements */}
+      {/* Subtle background glow */}
       <div className="scales-bg">
-        <Scale size={500} />
+        <Scale size={600} />
       </div>
 
       <div className="container">
-        <div className="hero-subtitle">Courtroom Flight Simulator</div>
-        <h1 className="hero-title">Practice Before You Plead</h1>
+        {/* Eyebrow */}
+        <div className="hero-eyebrow">
+          India's Premier Legal Simulation Platform
+        </div>
+
+        <h1 className="hero-title">Practice Before<br/>You Plead</h1>
+
         <p className="hero-desc">
-          Prepare for actual court proceedings by simulating hearings end-to-end. Arguing before an adversarial AI Judge and aggressive Opposing Counsel, you will receive a cold, objective performance audit graded against strict legal rubrics.
+          Step into a high-fidelity courtroom simulator. Argue before an adversarial AI Judge,
+          counter an aggressive opposing counsel, and receive a cold, objective performance audit
+          graded against strict Indian legal rubrics.
         </p>
 
+        {/* Mode Cards */}
         <div className="mode-cards">
-          {/* Card 1: Standard Practice */}
-          <div 
+          {/* Standard Practice */}
+          <div
             className="mode-card"
             onClick={() => onSelectMode("standard")}
           >
             <div className="card-icon">
-              <Compass size={32} />
+              <Compass size={28} />
             </div>
             <h3>Standard Practice</h3>
             <p>
-              Run high-fidelity, interactive, branch-mapped simulations for three standard legal disputes. This mode is 100% offline-friendly, instantly playable, and requires no API keys.
+              High-fidelity, branch-mapped simulations across three pre-built legal disputes.
+              Fully offline — no API key required. Pick your argument, handle objections, and
+              face the bench.
             </p>
-            <span className="badge badge-brass" style={{ alignSelf: "flex-start" }}>No API Key Required</span>
-            <button className="btn btn-brass" style={{ marginTop: "24px", width: "100%" }}>
-              Launch Case Studies
+            <span className="badge badge-brass" style={{ alignSelf: "flex-start", marginBottom: "20px" }}>
+              No API Key Required
+            </span>
+            <button className="btn btn-brass" style={{ width: "100%", padding: "14px" }}>
+              <Compass size={16} /> Launch Case Studies <ChevronRight size={14} />
             </button>
           </div>
 
-          {/* Card 2: Generative AI Practice */}
-          <div 
+          {/* Generative AI */}
+          <div
             className="mode-card"
             onClick={() => onSelectMode("generative")}
           >
             <div className="card-icon">
-              <Gavel size={32} />
+              <Zap size={28} />
             </div>
             <h3>Generative AI Mode</h3>
             <p>
-              Input custom facts, upload documents, and select your jurisdiction (Indian district, High Court, tribunals). Simulates free-form, infinite-turn dialogue using client-side Gemini AI.
+              Input any legal dispute, upload documents, and select your jurisdiction. Free-form,
+              infinite-turn dialogue with a live Gemini AI Judge and Opposing Counsel — fully
+              dynamic and unpredictable.
             </p>
-            <span className="badge badge-velvet" style={{ alignSelf: "flex-start" }}>Requires Gemini API Key</span>
-            <button className="btn btn-velvet" style={{ marginTop: "24px", width: "100%" }}>
-              Configure Custom Case
+            <span className="badge badge-velvet" style={{ alignSelf: "flex-start", marginBottom: "20px" }}>
+              Requires Gemini API Key
+            </span>
+            <button className="btn btn-velvet" style={{ width: "100%", padding: "14px" }}>
+              <Zap size={16} /> Configure Custom Case <ChevronRight size={14} />
             </button>
           </div>
         </div>
 
-        {/* Feature Highlights Grid */}
-        <div style={{ marginTop: "80px", borderTop: "1px solid var(--bg-tertiary)", paddingTop: "50px" }}>
-          <h2 style={{ textAlign: "center", marginBottom: "40px", fontSize: "1.8rem" }}>Designed For Objective Preparation</h2>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "30px", textAlign: "left" }}>
-            <div className="docket-card" style={{ padding: "20px" }}>
-              <div style={{ color: "var(--brass-gold)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+        {/* Divider */}
+        <div className="hero-divider">
+          <div className="hero-divider-line" />
+          <div className="hero-divider-icon"><Scale size={16} /></div>
+          <div className="hero-divider-line" />
+        </div>
+
+        {/* Feature Grid */}
+        <div>
+          <h2 style={{ textAlign: "center", marginBottom: "32px", fontSize: "1.6rem", opacity: 0.9 }}>
+            Engineered for Objective Preparation
+          </h2>
+
+          <div className="feature-grid">
+            <div className="feature-card">
+              <div className="feature-card-icon">
                 <ShieldAlert size={20} />
-                <h4 style={{ margin: 0 }}>Adversarial Prompts</h4>
+                <h4>Adversarial Judge AI</h4>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                The AI Judge is instructed not to validate, but to challenge every assertion, interrupt, and ask the hardest questions possible.
+              <p>
+                Instructed never to validate — only to challenge every assertion, find every gap,
+                and ask the hardest questions possible from the bench.
               </p>
             </div>
 
-            <div className="docket-card" style={{ padding: "20px" }}>
-              <div style={{ color: "var(--brass-gold)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+            <div className="feature-card">
+              <div className="feature-card-icon">
                 <Scale size={20} />
-                <h4 style={{ margin: 0 }}>Blind Evaluations</h4>
+                <h4>Blind Evaluation Engine</h4>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                A separate evaluator AI analyzes the final transcript without knowing which side the user is representing, ensuring unbiased legal auditing.
+              <p>
+                A separate AI evaluator analyzes the transcript without knowing which side you
+                represent — ensuring fully unbiased legal auditing.
               </p>
             </div>
 
-            <div className="docket-card" style={{ padding: "20px" }}>
-              <div style={{ color: "var(--brass-gold)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+            <div className="feature-card">
+              <div className="feature-card-icon">
                 <Award size={20} />
-                <h4 style={{ margin: 0 }}>Strict Rubrics</h4>
+                <h4>Strict Legal Rubrics</h4>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                Earn points across Legal Accuracy, Evidence, Composure, Etiquette, and Objection handling. Scores are hard-blocked unless specific criteria (like statute citations) are met.
+              <p>
+                Scores across Legal Accuracy, Evidence Strength, Procedural Compliance, and Pressure
+                Handling — with hard-blocked ceilings unless statute citations are made.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-card-icon">
+                <BookOpen size={20} />
+                <h4>Objection Training</h4>
+              </div>
+              <p>
+                Opposing counsel plants objectionable statements. Identify hearsay, speculation,
+                and irrelevance in real time before the window closes.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Setup API key shortcut */}
-        <div style={{ marginTop: "40px", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-          Already have a Gemini API Key? Configure it in{" "}
-          <span 
-            onClick={openSettings} 
+        {/* API Key shortcut */}
+        <div style={{ marginTop: "40px", fontSize: "0.82rem", color: "var(--text-muted)", textAlign: "center" }}>
+          Already have a Gemini API Key?{" "}
+          <span
+            onClick={openSettings}
             style={{ color: "var(--brass-gold)", cursor: "pointer", textDecoration: "underline" }}
           >
-            Settings
+            Configure it in Settings
           </span>{" "}
-          to enable Generative AI Mode immediately.
+          to enable Generative AI Mode.
         </div>
       </div>
     </div>
